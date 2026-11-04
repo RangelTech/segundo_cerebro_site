@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Definir senha · Segundo Cérebro</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="topo"><div class="wrap"><a class="marca" href="/"><img src="/assets/img/logo.png" alt="" width="34" height="34">Segundo Cérebro</a></div></header>
+<main class="wrap pag">
+  <h1>Defina a sua senha</h1>
+  <p>Crie a senha que você vai usar para entrar no aplicativo Segundo Cérebro, junto com o e-mail da sua assinatura.</p>
+  <form class="form" id="f" novalidate>
+    <label for="s1">Nova senha</label>
+    <input id="s1" type="password" autocomplete="new-password" minlength="8" required placeholder="Pelo menos 8 caracteres">
+    <label for="s2">Repita a senha</label>
+    <input id="s2" type="password" autocomplete="new-password" minlength="8" required>
+    <div class="msg" id="m" role="alert" hidden></div>
+    <button class="btn pri" id="b" type="submit">Salvar a senha</button>
+  </form>
+  <p id="fim" hidden>Pronto! Abra o aplicativo, toque em <b>Entrar</b> e use o seu e-mail com a nova senha. Se a sua conta ainda não foi liberada, avisaremos assim que estiver pronta.</p>
+</main>
+<script src="/assets/config.js"></script>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i) }
+  var token = new URLSearchParams(location.search).get('token') || ''
+  var msg = function (t, ok) { var m = $('m'); m.hidden = !t; m.textContent = t || ''; m.classList.toggle('ok', !!ok) }
+  if (!token) { msg('Este link está incompleto. Abra o link do e-mail de novo ou peça um novo ao suporte.') ; $('b').disabled = true }
+  $('f').addEventListener('submit', function (e) {
+    e.preventDefault(); msg('')
+    var a = $('s1').value, b = $('s2').value
+    if (a.length < 8) return msg('A senha precisa ter pelo menos 8 caracteres.')
+    if (a !== b) return msg('As duas senhas não são iguais.')
+    $('b').disabled = true; $('b').textContent = 'Salvando…'
+    fetch((window.BRAIN.api || '') + '/v1/auth/set-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token, password: a }) })
+      .then(function (r) { return r.json().catch(function () { return {} }).then(function (j) { return { ok: r.ok, j: j } }) })
+      .then(function (r) {
+        if (r.ok) { $('f').hidden = true; $('fim').hidden = false; return }
+        var c = r.j && r.j.error && r.j.error.code
+        msg(c === 'invalid_token' ? 'Este link venceu ou já foi usado. Peça um novo ao suporte.' : c === 'weak_password' ? 'Escolha uma senha mais forte (8 caracteres ou mais).' : c === 'too_many_attempts' ? 'Muitas tentativas. Aguarde alguns minutos.' : 'Não consegui salvar agora. Tente de novo em instantes.')
+        $('b').disabled = false; $('b').textContent = 'Salvar a senha'
+      })
+      .catch(function () { msg('Sem conexão com o servidor. Confira a internet e tente de novo.'); $('b').disabled = false; $('b').textContent = 'Salvar a senha' })
+  })
+})()
+</script>
+</body>
+</html>
