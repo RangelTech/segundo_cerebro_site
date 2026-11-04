@@ -183,3 +183,11 @@ section{padding:84px 0}
 .superf a{color:var(--mut);text-decoration:none;font-size:15px;border-bottom:1px solid var(--line)}
 .superf a:hover{color:var(--ink)}
 .fechar h2{font-size:clamp(34px,5vw,56px)}
+
+.bolha .mic{display:inline-flex;vertical-align:-3px;margin-right:8px;color:#e08a64}.bolha .mic svg{width:16px;height:16px}
+.lnk{align-self:flex-start;color:#7fb3ff;font-size:15px;text-decoration:underline;word-break:break-all}
+.foto{position:relative;justify-self:center;width:min(480px,100%)}
+.foto>img{width:100%;height:auto;border-radius:26px;box-shadow:var(--shadow);object-fit:cover}
+.flutua{position:absolute;left:-18px;bottom:26px;max-width:260px;background:#1f1d1a;color:#ece9e4;border:1px solid #3d3a35;border-radius:16px;padding:12px 14px;box-shadow:var(--shadow);font-size:14px}
+.flutua .quem{display:flex;gap:7px;align-items:center;font-size:12px;color:#a39e96;margin-bottom:5px}.flutua .quem img{width:18px;height:18px;border-radius:5px}.flutua p{margin:0;color:#ece9e4!important;font-size:14px!important}
+@media (max-width:980px){.flutua{left:10px}.web h2{font-size:clamp(28px,7vw,40px)}}
