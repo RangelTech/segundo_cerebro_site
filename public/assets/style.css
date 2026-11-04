@@ -113,8 +113,8 @@ section{padding:84px 0}
 .plano .p small{font:500 16px var(--sans);color:var(--mut);letter-spacing:0}
 .plano .desc{color:var(--mut);margin:0 0 20px;font-size:16px}
 .plano ul{list-style:none;padding:0;margin:0 0 26px;display:flex;flex-direction:column;gap:11px;flex:1}
-.plano li{display:flex;gap:11px;font-size:16px}
-.plano li::before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;background:color-mix(in srgb,var(--ok) 20%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3.2L15 7' fill='none' stroke='%233f8f5a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+.plano li{display:block;position:relative;padding-left:29px;font-size:16px;line-height:1.5}
+.plano li::before{content:"";position:absolute;left:0;top:3px;width:18px;height:18px;border-radius:50%;background:color-mix(in srgb,var(--ok) 20%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3.2L15 7' fill='none' stroke='%233f8f5a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
 .plano .btn{width:100%}
 .nota-plano{text-align:center;color:var(--mut);margin-top:26px;font-size:15px}
 
