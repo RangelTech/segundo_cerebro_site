@@ -44,7 +44,7 @@
 
   // links diretos da última release (a API do GitHub aceita chamada do navegador); se falhar, ficam na página de releases
   var casar = {
-    'win-setup': /Instalador.*\.exe$/i, 'win-portable': /Portatil.*\.exe$/i,
+    'win-setup': /Windows\.exe$/i, 'win-portable': /Portatil\.exe$/i,
     'mac-arm': /mac-arm64\.dmg$/i, 'mac-intel': /mac-x64\.dmg$/i,
     'linux-appimage': /\.AppImage$/i, 'linux-deb': /\.deb$/i,
   }
