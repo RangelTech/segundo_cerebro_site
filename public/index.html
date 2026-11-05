@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://brain.rangeltech.net/">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.12">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.13">
 <script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -64,8 +64,8 @@
   <div class="wrap">
     <div class="tit"><h2>Planos</h2><p>Escolha o plano e comece a usar.</p></div>
     <div class="alterna" role="group" aria-label="Ciclo de cobrança">
-      <button type="button" data-ciclo="mensal" aria-pressed="true">Mensal</button>
-      <button type="button" data-ciclo="anual" aria-pressed="false">Anual <span class="etq">2 meses grátis</span></button>
+      <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
+      <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
     </div>
     <div class="planos quatro">
       <article class="plano">
@@ -110,7 +110,7 @@
         <a class="btn sec" data-plano="infinity" href="#planos">Assinar o Infinity</a>
       </article>
     </div>
-    <p class="nota-plano">Valores por mês no plano mensal. No anual você paga 10 meses e leva 12, em até 12x no cartão. Pagamento por cartão de crédito, pela Cakto. O acesso é liberado após a confirmação do pagamento.</p>
+    <p class="nota-plano" id="nota-planos"></p>
   </div>
 </section>
 
@@ -142,8 +142,8 @@
   <div class="wrap">
     <div class="tit"><h2>Uma máquina virtual só sua</h2><p>O Segundo Cérebro rodando 24 horas num servidor dedicado, sem instalar nada no seu computador.</p></div>
     <div class="alterna" role="group" aria-label="Ciclo de cobrança">
-      <button type="button" data-ciclo="mensal" aria-pressed="true">Mensal</button>
-      <button type="button" data-ciclo="anual" aria-pressed="false">Anual <span class="etq">2 meses grátis</span></button>
+      <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
+      <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
     </div>
     <div class="planos" style="grid-template-columns:minmax(0,420px);justify-content:center">
       <article class="plano dest">
@@ -159,7 +159,7 @@
         <a class="btn pri" data-plano="vm" href="#maquina-virtual">Quero uma máquina virtual</a>
       </article>
     </div>
-    <p class="nota-plano">Ideal para quem não quer instalar nada: concessionárias, clínicas, agências e escritórios. Pagamento por cartão de crédito, pela Cakto.</p>
+    <p class="nota-plano" id="nota-vm"></p>
   </div>
 </section>
 
@@ -200,8 +200,8 @@
     <button class="modal-fechar" type="button" aria-label="Fechar" data-fechar>&times;</button>
     <div class="mp-resumo">
       <div class="alterna" role="group" aria-label="Ciclo de cobrança" style="margin:0 0 14px;width:100%">
-        <button type="button" data-ciclo="mensal" aria-pressed="true" style="flex:1;justify-content:center">Mensal</button>
-        <button type="button" data-ciclo="anual" aria-pressed="false" style="flex:1;justify-content:center">Anual <span class="etq">2 meses grátis</span></button>
+        <button type="button" data-ciclo="mensal" aria-pressed="false" style="flex:1;justify-content:center">Mensal</button>
+        <button type="button" data-ciclo="anual" aria-pressed="true" style="flex:1;justify-content:center">Anual <span class="etq">Economize 2 meses</span></button>
       </div>
       <span class="mp-rotulo">Seu plano</span>
       <h3 id="mp-titulo"></h3>
@@ -226,7 +226,7 @@
     </div>
   </div>
 </div>
-<script src="/assets/config.js?v=0.1.12"></script>
-<script src="/assets/app.js?v=0.1.12"></script>
+<script src="/assets/config.js?v=0.1.13"></script>
+<script src="/assets/app.js?v=0.1.13"></script>
 </body>
 </html>

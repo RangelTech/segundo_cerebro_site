@@ -26,7 +26,7 @@
   // com link, o botão abre o modal que oferece a máquina virtual
   var modal = $('#modal-plano')
   var ultimoFoco = null
-  var ciclo = 'mensal'
+  var ciclo = 'anual'  // o anual já abre selecionado
   var MESES = C.mesesAnual || 10
   function num(n) {
     var cent = Math.abs(n - Math.round(n)) > 0.004
@@ -39,9 +39,27 @@
     var anual = mensal * MESES
     return { mensal: mensal, anual: anual, equiv: anual / 12, economia: mensal * 12 - anual }
   }
-  function infoAnual(mensal) {
+  // preço grande com os centavos pequenos em cima: R$ 205,83 -> "R$ 205" + ",83"
+  function precoGrande(n) {
+    var inteiro = Math.floor(n + 1e-9)
+    var cent = Math.round((n - inteiro) * 100)
+    return 'R$ ' + inteiro.toLocaleString('pt-BR') + (cent ? '<sup>,' + String(cent).padStart(2, '0') + '</sup>' : '')
+  }
+  function descontoPct(mensal) { var q = precos(mensal); return Math.round(100 * q.economia / (q.mensal * 12)) }
+  function precoHtml(mensal) {
     var q = precos(mensal)
-    return '<span class="eco">Economize ' + brl(q.economia) + '</span><br>no lugar de <s>' + brl(q.mensal) + '/mês</s>: cobrado ' + brl(q.anual) + ' por ano, em até 12x no cartão'
+    if (ciclo === 'anual') {
+      return '<span class="rev"><s>' + brl(q.mensal) + '</s><span class="selo">-' + descontoPct(mensal) + '%</span></span>' +
+        '<span class="gr">' + precoGrande(q.equiv) + '<small class="eq">/mês</small></span><span class="noanual">no plano anual</span>'
+    }
+    return '<span class="gr">' + precoGrande(q.mensal) + '<small class="eq">/mês</small></span>'
+  }
+  function infoHtml(mensal) {
+    var q = precos(mensal)
+    if (ciclo === 'anual') {
+      return '<span class="eco">Economize ' + brl(q.economia) + '</span><br><span class="legal">Cobrado anualmente: ' + brl(q.anual) + ' por ano, em até 12x no cartão.</span>'
+    }
+    return '<button type="button" class="link-anual" data-ir-anual>Assine o anual e pague menos</button><br><span class="legal">Cobrado todo mês no cartão de crédito.</span>'
   }
   function pintarCard(card) {
     var p = card.querySelector('.p')
@@ -50,14 +68,10 @@
     var mensal = +card.dataset.mensal
     var info = card.querySelector('.anual-info')
     if (!info) { info = document.createElement('p'); info.className = 'anual-info'; p.insertAdjacentElement('afterend', info) }
-    if (ciclo === 'anual') {
-      p.innerHTML = brl(precos(mensal).equiv) + '<small class="eq">por mês no plano anual</small>'
-      info.innerHTML = infoAnual(mensal)
-      info.hidden = false
-    } else {
-      p.innerHTML = brl(mensal) + '<small> /mês</small>'
-      info.hidden = true
-    }
+    p.classList.add('mkt')
+    p.innerHTML = precoHtml(mensal)
+    info.innerHTML = infoHtml(mensal)
+    info.hidden = false
   }
   function aplicarCiclo() {
     $$('[data-plano]').forEach(function (a) {
@@ -67,8 +81,14 @@
       pintarCard(a.closest('.plano'))
     })
     $$('.alterna button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.ciclo === ciclo ? 'true' : 'false') })
-    var no = $('#nota-ciclo')
-    if (no) no.hidden = ciclo !== 'anual'
+    var np = $('#nota-planos')
+    if (np) np.textContent = ciclo === 'anual'
+      ? 'No anual você paga 10 meses e usa 12: são 2 meses de graça, cobrados anualmente, em até 12x no cartão de crédito. Cancele pela Cakto quando quiser; o acesso vale até o fim do período pago.'
+      : 'Sem fidelidade: cancele pela Cakto quando quiser, e o acesso vale até o fim do mês pago. Pagamento por cartão de crédito. Assine o anual e leve 2 meses de graça.'
+    var nv = $('#nota-vm')
+    if (nv) nv.textContent = ciclo === 'anual'
+      ? 'Para concessionárias, clínicas, agências e escritórios que não querem instalar nada. No anual são 2 meses de graça, cobrados anualmente, em até 12x no cartão de crédito.'
+      : 'Para concessionárias, clínicas, agências e escritórios que não querem instalar nada. Pagamento por cartão de crédito. No anual você ganha 2 meses de graça.'
   }
   function fecharModal() {
     if (!modal || modal.hidden) return
@@ -84,15 +104,16 @@
     var cheio = mensal + vm
     var q = precos(mensal)
     $('#mp-titulo').textContent = card.querySelector('h3').textContent + (ciclo === 'anual' ? ' anual' : '')
-    $('#mp-preco').innerHTML = ciclo === 'anual' ? brl(q.equiv) + '<small class="eq">por mês no plano anual</small>' : brl(mensal) + '<small> /mês</small>'
+    $('#mp-preco').className = 'p mkt'
+    $('#mp-preco').innerHTML = precoHtml(mensal)
     var info = $('#mp-anual')
-    if (info) { info.hidden = ciclo !== 'anual'; if (ciclo === 'anual') info.innerHTML = infoAnual(mensal) }
+    if (info) { info.hidden = false; info.innerHTML = infoHtml(mensal) }
     var soma = $('#mp-soma')
     if (ciclo === 'anual') {
       var qc = precos(cheio)
-      soma.innerHTML = '<b>+ ' + brl(vm * MESES / 12) + '</b> por mês no anual (' + brl(vm * MESES) + ' por ano). Total: <b>' + brl(qc.equiv) + '</b> por mês, cobrado ' + brl(qc.anual) + ' por ano, em até 12x. Você economiza <b>' + brl(qc.economia) + '</b>.'
+      soma.innerHTML = '<b>+ ' + brl(vm * MESES / 12) + '</b> por mês no anual (de <s>' + brl(vm) + '</s>). Total: <b>' + brl(qc.equiv) + '</b> por mês. <span class="legal">Cobrado anualmente: ' + brl(qc.anual) + ' por ano, em até 12x no cartão. Você economiza ' + brl(qc.economia) + '.</span>'
     } else {
-      soma.innerHTML = '<b>+ ' + brl(vm) + '</b> por mês, somados ao plano. Total: <b>' + brl(cheio) + '</b> por mês.'
+      soma.innerHTML = '<b>+ ' + brl(vm) + '</b> por mês, somados ao plano. Total: <b>' + brl(cheio) + '</b> por mês. <span class="legal">Cobrado todo mês no cartão de crédito.</span>'
     }
     var sim = $('#mp-sim'), nao = $('#mp-nao')
     sim.href = checkoutVmDe(id) || checkoutDe(id)
@@ -117,6 +138,13 @@
     if (!(C.checkout || {})[id]) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve'; return }
     a.href = C.checkout[id]; a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
     if (modal && id !== 'vm' && (C.checkoutVm || {})[id]) a.addEventListener('click', function (e) { e.preventDefault(); abrirModal(a) })
+  })
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-ir-anual]')
+    if (!t) return
+    ciclo = 'anual'
+    aplicarCiclo()
+    if (modal && !modal.hidden && modal._botao) pintarModal(modal._botao)
   })
   $$('.alterna button').forEach(function (b) {
     b.addEventListener('click', function () {
