@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://brain.rangeltech.net/">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.10">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.11">
 <script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -187,7 +187,33 @@
     <div class="copy"><span>© 2026 Rangel Tech. Todos os direitos reservados.</span><span>brain.rangeltech.net</span></div>
   </div>
 </footer>
-<script src="/assets/config.js?v=0.1.10"></script>
-<script src="/assets/app.js?v=0.1.10"></script>
+<div class="modal" id="modal-plano" role="dialog" aria-modal="true" aria-labelledby="mp-titulo" hidden>
+  <div class="modal-caixa">
+    <button class="modal-fechar" type="button" aria-label="Fechar" data-fechar>&times;</button>
+    <div class="mp-resumo">
+      <span class="mp-rotulo">Seu plano</span>
+      <h3 id="mp-titulo"></h3>
+      <div class="p" id="mp-preco"></div>
+      <ul id="mp-lista"></ul>
+    </div>
+    <div class="mp-vm">
+      <h4>Quer adicionar uma máquina virtual?</h4>
+      <ul>
+        <li>Servidor dedicado ligado 24 horas por dia, 7 dias por semana</li>
+        <li>Acesso pelo celular ou pelo computador</li>
+        <li>A equipe cuida e corrige se der algum problema</li>
+        <li>Já vem pronta: criamos e instalamos para você</li>
+        <li>Toda a equipe no mesmo login</li>
+      </ul>
+      <p class="mp-soma"><b>+ R$ 399</b> por mês, somados ao plano. Total: <b id="mp-total"></b> por mês.</p>
+      <div class="mp-botoes">
+        <a class="btn pri" id="mp-sim" href="#" rel="noopener">Sim, adicionar a máquina virtual</a>
+        <a class="btn sec" id="mp-nao" href="#" rel="noopener">Não, só o plano</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/assets/config.js?v=0.1.11"></script>
+<script src="/assets/app.js?v=0.1.11"></script>
 </body>
 </html>

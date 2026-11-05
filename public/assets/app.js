@@ -22,12 +22,56 @@
     $$('a', menu).forEach(function (a) { a.addEventListener('click', function () { menu.classList.remove('aberto'); burger.setAttribute('aria-expanded', 'false') }) })
   }
 
-  // planos: sem link do checkout configurado o botão fica "Em breve"
+  // planos: sem link do checkout configurado o botão fica "Em breve"; com link, o botão abre o modal que oferece a máquina virtual
+  var modal = $('#modal-plano')
+  var ultimoFoco = null
+  function brl(n) { return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }
+  function fecharModal() {
+    if (!modal || modal.hidden) return
+    modal.hidden = true
+    document.body.classList.remove('modal-aberto')
+    if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus()
+  }
+  function abrirModal(botao) {
+    var id = botao.dataset.plano
+    var card = botao.closest('.plano')
+    var preco = parseInt(((card.querySelector('.p') || {}).textContent || '').replace(/\D/g, ''), 10) || 0
+    $('#mp-titulo').textContent = card.querySelector('h3').textContent
+    $('#mp-preco').innerHTML = brl(preco) + '<small> /mês</small>'
+    var lista = $('#mp-lista')
+    lista.innerHTML = ''
+    $$('li', card).forEach(function (li) { var n = document.createElement('li'); n.textContent = li.textContent; lista.appendChild(n) })
+    $('#mp-total').textContent = brl(preco + (C.precoVm || 399))
+    var sim = $('#mp-sim'), nao = $('#mp-nao')
+    sim.href = (C.checkoutVm || {})[id] || C.checkout[id]
+    nao.href = C.checkout[id]
+    ultimoFoco = botao
+    modal.hidden = false
+    document.body.classList.add('modal-aberto')
+    nao.focus({ preventScroll: true })
+    var caixa = $('.modal-caixa'); if (caixa) caixa.scrollTop = 0
+  }
   $$('[data-plano]').forEach(function (a) {
-    var url = (C.checkout || {})[a.dataset.plano]
-    if (url) { a.href = url; a.rel = 'noopener' }
-    else { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve' }
+    var id = a.dataset.plano
+    var url = (C.checkout || {})[id]
+    if (!url) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve'; return }
+    a.href = url; a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
+    if (modal && id !== 'vm' && (C.checkoutVm || {})[id]) a.addEventListener('click', function (e) { e.preventDefault(); abrirModal(a) })
   })
+  if (modal) {
+    modal.addEventListener('click', function (e) { if (e.target === modal || e.target.hasAttribute('data-fechar')) fecharModal() })
+    document.addEventListener('keydown', function (e) {
+      if (modal.hidden) return
+      if (e.key === 'Escape') fecharModal()
+      if (e.key === 'Tab') {  // mantém o foco dentro do modal
+        var f = $$('a[href], button', modal).filter(function (x) { return x.offsetParent !== null })
+        if (!f.length) return
+        var ini = f[0], fim = f[f.length - 1]
+        if (e.shiftKey && document.activeElement === ini) { e.preventDefault(); fim.focus() }
+        else if (!e.shiftKey && document.activeElement === fim) { e.preventDefault(); ini.focus() }
+      }
+    })
+  }
   var web = $('[data-web]')
   if (web && C.web) web.href = C.web
 
