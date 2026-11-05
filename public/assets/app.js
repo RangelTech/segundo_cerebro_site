@@ -22,41 +22,108 @@
     $$('a', menu).forEach(function (a) { a.addEventListener('click', function () { menu.classList.remove('aberto'); burger.setAttribute('aria-expanded', 'false') }) })
   }
 
-  // planos: sem link do checkout configurado o botão fica "Em breve"; com link, o botão abre o modal que oferece a máquina virtual
+  // planos: mensal ou anual (anual = 10 meses pagos, 2 de graça, em até 12x no cartão). Sem link do checkout o botão fica "Em breve";
+  // com link, o botão abre o modal que oferece a máquina virtual
   var modal = $('#modal-plano')
   var ultimoFoco = null
-  function brl(n) { return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }
+  var ciclo = 'mensal'
+  var MESES = C.mesesAnual || 10
+  function num(n) {
+    var cent = Math.abs(n - Math.round(n)) > 0.004
+    return n.toLocaleString('pt-BR', { minimumFractionDigits: cent ? 2 : 0, maximumFractionDigits: cent ? 2 : 0 })
+  }
+  function brl(n) { return 'R$ ' + num(n) }
+  function checkoutDe(id) { return ((ciclo === 'anual' ? C.checkoutAnual : C.checkout) || {})[id] }
+  function checkoutVmDe(id) { return ((ciclo === 'anual' ? C.checkoutVmAnual : C.checkoutVm) || {})[id] }
+  function precos(mensal) {  // mensal: preço do mês cheio; no anual o cliente paga MESES vezes e o equivalente mensal é anual / 12
+    var anual = mensal * MESES
+    return { mensal: mensal, anual: anual, equiv: anual / 12, economia: mensal * 12 - anual }
+  }
+  function infoAnual(mensal) {
+    var q = precos(mensal)
+    return '<span class="eco">Economize ' + brl(q.economia) + '</span><br>no lugar de <s>' + brl(q.mensal) + '/mês</s>: cobrado ' + brl(q.anual) + ' por ano, em até 12x no cartão'
+  }
+  function pintarCard(card) {
+    var p = card.querySelector('.p')
+    if (!p) return
+    if (!card.dataset.mensal) card.dataset.mensal = String(parseInt((p.textContent || '').replace(/\D/g, ''), 10) || 0)
+    var mensal = +card.dataset.mensal
+    var info = card.querySelector('.anual-info')
+    if (!info) { info = document.createElement('p'); info.className = 'anual-info'; p.insertAdjacentElement('afterend', info) }
+    if (ciclo === 'anual') {
+      p.innerHTML = brl(precos(mensal).equiv) + '<small class="eq">por mês no plano anual</small>'
+      info.innerHTML = infoAnual(mensal)
+      info.hidden = false
+    } else {
+      p.innerHTML = brl(mensal) + '<small> /mês</small>'
+      info.hidden = true
+    }
+  }
+  function aplicarCiclo() {
+    $$('[data-plano]').forEach(function (a) {
+      var url = checkoutDe(a.dataset.plano)
+      if (!url) return
+      a.href = url
+      pintarCard(a.closest('.plano'))
+    })
+    $$('.alterna button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.ciclo === ciclo ? 'true' : 'false') })
+    var no = $('#nota-ciclo')
+    if (no) no.hidden = ciclo !== 'anual'
+  }
   function fecharModal() {
     if (!modal || modal.hidden) return
     modal.hidden = true
     document.body.classList.remove('modal-aberto')
     if (ultimoFoco && ultimoFoco.focus) ultimoFoco.focus()
   }
-  function abrirModal(botao) {
+  function pintarModal(botao) {
     var id = botao.dataset.plano
     var card = botao.closest('.plano')
-    var preco = parseInt(((card.querySelector('.p') || {}).textContent || '').replace(/\D/g, ''), 10) || 0
-    $('#mp-titulo').textContent = card.querySelector('h3').textContent
-    $('#mp-preco').innerHTML = brl(preco) + '<small> /mês</small>'
-    var lista = $('#mp-lista')
-    lista.innerHTML = ''
-    $$('li', card).forEach(function (li) { var n = document.createElement('li'); n.textContent = li.textContent; lista.appendChild(n) })
-    $('#mp-total').textContent = brl(preco + (C.precoVm || 399))
+    var mensal = +card.dataset.mensal
+    var vm = C.precoVm || 399
+    var cheio = mensal + vm
+    var q = precos(mensal)
+    $('#mp-titulo').textContent = card.querySelector('h3').textContent + (ciclo === 'anual' ? ' anual' : '')
+    $('#mp-preco').innerHTML = ciclo === 'anual' ? brl(q.equiv) + '<small class="eq">por mês no plano anual</small>' : brl(mensal) + '<small> /mês</small>'
+    var info = $('#mp-anual')
+    if (info) { info.hidden = ciclo !== 'anual'; if (ciclo === 'anual') info.innerHTML = infoAnual(mensal) }
+    var soma = $('#mp-soma')
+    if (ciclo === 'anual') {
+      var qc = precos(cheio)
+      soma.innerHTML = '<b>+ ' + brl(vm * MESES / 12) + '</b> por mês no anual (' + brl(vm * MESES) + ' por ano). Total: <b>' + brl(qc.equiv) + '</b> por mês, cobrado ' + brl(qc.anual) + ' por ano, em até 12x. Você economiza <b>' + brl(qc.economia) + '</b>.'
+    } else {
+      soma.innerHTML = '<b>+ ' + brl(vm) + '</b> por mês, somados ao plano. Total: <b>' + brl(cheio) + '</b> por mês.'
+    }
     var sim = $('#mp-sim'), nao = $('#mp-nao')
-    sim.href = (C.checkoutVm || {})[id] || C.checkout[id]
-    nao.href = C.checkout[id]
+    sim.href = checkoutVmDe(id) || checkoutDe(id)
+    nao.href = checkoutDe(id)
+    $$('.alterna button', modal).forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.ciclo === ciclo ? 'true' : 'false') })
+  }
+  function abrirModal(botao) {
+    var card = botao.closest('.plano')
+    var lista = $('#mp-lista')
+    $('#mp-lista').innerHTML = ''
+    $$('li', card).forEach(function (li) { var n = document.createElement('li'); n.textContent = li.textContent; lista.appendChild(n) })
     ultimoFoco = botao
+    modal._botao = botao
+    pintarModal(botao)
     modal.hidden = false
     document.body.classList.add('modal-aberto')
-    nao.focus({ preventScroll: true })
+    $('#mp-nao').focus({ preventScroll: true })
     var caixa = $('.modal-caixa'); if (caixa) caixa.scrollTop = 0
   }
   $$('[data-plano]').forEach(function (a) {
     var id = a.dataset.plano
-    var url = (C.checkout || {})[id]
-    if (!url) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve'; return }
-    a.href = url; a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
+    if (!(C.checkout || {})[id]) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve'; return }
+    a.href = C.checkout[id]; a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
     if (modal && id !== 'vm' && (C.checkoutVm || {})[id]) a.addEventListener('click', function (e) { e.preventDefault(); abrirModal(a) })
+  })
+  $$('.alterna button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      ciclo = b.dataset.ciclo
+      aplicarCiclo()
+      if (modal && !modal.hidden && modal._botao) pintarModal(modal._botao)
+    })
   })
   if (modal) {
     modal.addEventListener('click', function (e) { if (e.target === modal || e.target.hasAttribute('data-fechar')) fecharModal() })
@@ -72,6 +139,7 @@
       }
     })
   }
+  aplicarCiclo()
   var web = $('[data-web]')
   if (web && C.web) web.href = C.web
 

@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://brain.rangeltech.net/">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.11">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.12">
 <script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -63,6 +63,10 @@
 <section id="planos" class="alt">
   <div class="wrap">
     <div class="tit"><h2>Planos</h2><p>Escolha o plano e comece a usar.</p></div>
+    <div class="alterna" role="group" aria-label="Ciclo de cobrança">
+      <button type="button" data-ciclo="mensal" aria-pressed="true">Mensal</button>
+      <button type="button" data-ciclo="anual" aria-pressed="false">Anual <span class="etq">2 meses grátis</span></button>
+    </div>
     <div class="planos quatro">
       <article class="plano">
         <h3>Pro</h3><div class="p">R$ 247<small> /mês</small></div><p class="desc">Para começar.</p>
@@ -106,7 +110,7 @@
         <a class="btn sec" data-plano="infinity" href="#planos">Assinar o Infinity</a>
       </article>
     </div>
-    <p class="nota-plano">Valores por mês. Pagamento pela Cakto. O acesso é liberado após a confirmação do pagamento.</p>
+    <p class="nota-plano">Valores por mês no plano mensal. No anual você paga 10 meses e leva 12, em até 12x no cartão. Pagamento por cartão de crédito, pela Cakto. O acesso é liberado após a confirmação do pagamento.</p>
   </div>
 </section>
 
@@ -137,6 +141,10 @@
 <section id="maquina-virtual">
   <div class="wrap">
     <div class="tit"><h2>Uma máquina virtual só sua</h2><p>O Segundo Cérebro rodando 24 horas num servidor dedicado, sem instalar nada no seu computador.</p></div>
+    <div class="alterna" role="group" aria-label="Ciclo de cobrança">
+      <button type="button" data-ciclo="mensal" aria-pressed="true">Mensal</button>
+      <button type="button" data-ciclo="anual" aria-pressed="false">Anual <span class="etq">2 meses grátis</span></button>
+    </div>
     <div class="planos" style="grid-template-columns:minmax(0,420px);justify-content:center">
       <article class="plano dest">
         <span class="flag">Para equipes</span>
@@ -151,7 +159,7 @@
         <a class="btn pri" data-plano="vm" href="#maquina-virtual">Quero uma máquina virtual</a>
       </article>
     </div>
-    <p class="nota-plano">Ideal para quem não quer instalar nada: concessionárias, clínicas, agências e escritórios. Pagamento pela Cakto.</p>
+    <p class="nota-plano">Ideal para quem não quer instalar nada: concessionárias, clínicas, agências e escritórios. Pagamento por cartão de crédito, pela Cakto.</p>
   </div>
 </section>
 
@@ -191,9 +199,14 @@
   <div class="modal-caixa">
     <button class="modal-fechar" type="button" aria-label="Fechar" data-fechar>&times;</button>
     <div class="mp-resumo">
+      <div class="alterna" role="group" aria-label="Ciclo de cobrança" style="margin:0 0 14px;width:100%">
+        <button type="button" data-ciclo="mensal" aria-pressed="true" style="flex:1;justify-content:center">Mensal</button>
+        <button type="button" data-ciclo="anual" aria-pressed="false" style="flex:1;justify-content:center">Anual <span class="etq">2 meses grátis</span></button>
+      </div>
       <span class="mp-rotulo">Seu plano</span>
       <h3 id="mp-titulo"></h3>
       <div class="p" id="mp-preco"></div>
+      <p class="anual-info" id="mp-anual" hidden></p>
       <ul id="mp-lista"></ul>
     </div>
     <div class="mp-vm">
@@ -205,7 +218,7 @@
         <li>Já vem pronta: criamos e instalamos para você</li>
         <li>Toda a equipe no mesmo login</li>
       </ul>
-      <p class="mp-soma"><b>+ R$ 399</b> por mês, somados ao plano. Total: <b id="mp-total"></b> por mês.</p>
+      <p class="mp-soma" id="mp-soma"><b>+ R$ 399</b> por mês, somados ao plano. Total: <b id="mp-total"></b> por mês.</p>
       <div class="mp-botoes">
         <a class="btn pri" id="mp-sim" href="#" rel="noopener">Sim, adicionar a máquina virtual</a>
         <a class="btn sec" id="mp-nao" href="#" rel="noopener">Não, só o plano</a>
@@ -213,7 +226,7 @@
     </div>
   </div>
 </div>
-<script src="/assets/config.js?v=0.1.11"></script>
-<script src="/assets/app.js?v=0.1.11"></script>
+<script src="/assets/config.js?v=0.1.12"></script>
+<script src="/assets/app.js?v=0.1.12"></script>
 </body>
 </html>
