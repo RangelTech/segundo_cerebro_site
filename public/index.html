@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://brain.rangeltech.net/">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.13">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.14">
 <script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -62,52 +62,70 @@
 
 <section id="planos" class="alt">
   <div class="wrap">
-    <div class="tit"><h2>Planos</h2><p>Escolha o plano e comece a usar.</p></div>
+    <div class="tit"><h2>Planos</h2><p>Do essencial ao sob medida. Escolha o plano e comece a usar.</p></div>
     <div class="alterna" role="group" aria-label="Ciclo de cobrança">
       <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
       <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
     </div>
+    <ul class="destaques" aria-label="Diferenciais">
+      <li><b>IA sem censura</b> a partir do Max</li>
+      <li><b>Clonagem liberada</b> a partir do Max</li>
+      <li><b>Claude, GPT e outros provedores</b> em todos os planos</li>
+    </ul>
     <div class="planos quatro">
       <article class="plano">
-        <h3>Pro</h3><div class="p">R$ 247<small> /mês</small></div><p class="desc">Para começar.</p>
+        <h3>Light</h3><div class="p">R$ 120<small> /mês</small></div><p class="desc">O essencial para começar.</p>
         <ul>
           <li>Aplicativo para Windows, macOS e Linux</li>
+          <li>Segundo Cérebro Web no celular e no computador</li>
           <li>Uso por sessão de 5 horas</li>
-          <li>Segundo Cérebro Web no celular</li>
           <li>Computadores ilimitados</li>
+          <li>Memória das conversas e geração de imagens</li>
+          <li>Conecte a sua conta do <b>Claude</b>, do <b>GPT</b> e de outros provedores, além da nossa IA</li>
+          <li>IA com filtro de conteúdo</li>
+          <li class="nao">Sem o pacote de skills profissionais: você instala as suas</li>
         </ul>
-        <a class="btn sec" data-plano="pro" href="#planos">Assinar o Pro</a>
+        <a class="btn sec" data-plano="light" href="#planos">Assinar o Light</a>
       </article>
       <article class="plano dest">
         <span class="flag">Mais escolhido</span>
-        <h3>Max</h3><div class="p">R$ 497<small> /mês</small></div><p class="desc">Para usar o dia inteiro.</p>
+        <h3>Max</h3><div class="p">R$ 497<small> /mês</small></div><p class="desc">Para usar o dia inteiro, com tudo pronto.</p>
         <ul>
-          <li><b>Sem censura</b></li>
-          <li>3 vezes mais uso por sessão que o Pro</li>
+          <li><b>IA sem censura</b></li>
+          <li><b>Clonagem liberada</b></li>
+          <li><b>Pacote de skills profissional já configurado:</b> vídeo, imagem, voz, web, dados, documentos, marketing, automação, código e mais, prontas para usar</li>
+          <li><b>Limite de tokens muito maior:</b> 3 vezes mais uso por sessão que o Light</li>
+          <li>Mais geração de imagens por mês</li>
           <li>Prioridade na fila</li>
-          <li>Tudo do Pro</li>
+          <li>Multiprovedor: Claude, GPT e a nossa IA no mesmo lugar</li>
+          <li>Tudo do Light</li>
         </ul>
         <a class="btn pri" data-plano="max" href="#planos">Assinar o Max</a>
       </article>
       <article class="plano">
         <h3>Ultra</h3><div class="p">R$ 1.497<small> /mês</small></div><p class="desc">Para equipes e agências.</p>
         <ul>
-          <li><b>Sem limite de sessão:</b> tokens à vontade</li>
+          <li><b>Sem limite de sessão:</b> tokens à vontade, o dia todo</li>
+          <li><b>IA sem censura</b> e <b>clonagem liberada</b></li>
+          <li>Pacote de skills profissional completo e pré-configurado</li>
+          <li>4 vezes mais imagens por mês que o Max</li>
           <li>Prioridade máxima na fila</li>
-          <li>Filtro apenas de conteúdo hediondo</li>
-          <li>Tudo do Pro</li>
+          <li>Multiprovedor: Claude, GPT e a nossa IA</li>
+          <li>Tudo do Max</li>
         </ul>
         <a class="btn sec" data-plano="ultra" href="#planos">Assinar o Ultra</a>
       </article>
       <article class="plano">
-        <h3>Infinity</h3><div class="p">R$ 1.997<small> /mês</small></div><p class="desc">Tudo, sem trava nenhuma.</p>
+        <h3>Enterprise</h3><div class="p consulta">Sob consulta</div><p class="desc">Para equipes e empresas.</p>
         <ul>
-          <li><b>Sem limite de sessão</b> e <b>sem censura</b></li>
-          <li>Tokens à vontade, o dia todo</li>
-          <li>Prioridade máxima na fila</li>
+          <li><b>Análise detalhada do seu problema</b> antes de qualquer proposta</li>
+          <li><b>Criamos o aplicativo de acordo com a sua demanda</b>, com os seus fluxos e regras</li>
+          <li>Integração com os seus sistemas, bases de dados e ferramentas</li>
+          <li>Máquina virtual dedicada, implantação e suporte direto com a nossa equipe</li>
+          <li>Skills sob medida para o seu negócio</li>
           <li>Tudo do Ultra</li>
         </ul>
-        <a class="btn sec" data-plano="infinity" href="#planos">Assinar o Infinity</a>
+        <a class="btn pri" data-wa href="https://wa.me/5562985613482?text=Ol%C3%A1%21%20Quero%20falar%20sobre%20o%20plano%20Enterprise%20do%20Segundo%20C%C3%A9rebro." rel="noopener">Falar no WhatsApp</a>
       </article>
     </div>
     <p class="nota-plano" id="nota-planos"></p>
@@ -170,6 +188,8 @@
       <details><summary>O que preciso para usar?</summary><p>Baixar o aplicativo (grátis) e ter uma assinatura ativa. Depois do pagamento você cria a sua senha, nossa equipe libera o acesso e é só entrar com e-mail e senha.</p></details>
       <details><summary>Quais sistemas são suportados?</summary><p>Windows 10 ou superior, macOS (Apple Silicon e Intel) e Linux (AppImage e .deb).</p></details>
       <details><summary>Meus arquivos vão para a nuvem?</summary><p>O agente trabalha no seu computador, na pasta que você escolhe. O que você escreve para a IA é processado nos nossos servidores para gerar a resposta.</p></details>
+      <details><summary>Posso usar o Claude e o GPT?</summary><p>Sim, em todos os planos. Além da nossa IA, você conecta a sua conta do Claude, do GPT e de outros provedores e escolhe qual usar em cada conversa.</p></details>
+      <details><summary>Qual a diferença entre o Light e os outros planos?</summary><p>O Light traz o essencial, com filtro de conteúdo e sem o pacote de skills. A partir do Max a IA é sem censura, a clonagem é liberada, o limite de uso é bem maior e o pacote de skills profissional já vem configurado.</p></details>
       <details><summary>Em quantos computadores posso usar?</summary><p>Em quantos você quiser: não há limite de computadores.</p></details>
       <details><summary>Como cancelo?</summary><p>Pela própria Cakto, no link do seu comprovante. O acesso vale até o fim do período pago.</p></details>
       <details><summary>Esqueci a senha.</summary><p>No aplicativo, toque em “Esqueci a senha” e informe o e-mail. Se não receber o link, fale com o suporte.</p></details>
@@ -226,7 +246,7 @@
     </div>
   </div>
 </div>
-<script src="/assets/config.js?v=0.1.13"></script>
-<script src="/assets/app.js?v=0.1.13"></script>
+<script src="/assets/config.js?v=0.1.14"></script>
+<script src="/assets/app.js?v=0.1.14"></script>
 </body>
 </html>

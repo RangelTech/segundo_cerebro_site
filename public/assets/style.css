@@ -256,3 +256,12 @@ body.modal-aberto{overflow:hidden}
 .mp-resumo .p.mkt .gr{font-size:40px}
 .mp-soma s{color:#d4524a}
 .mp-soma .legal{display:block;margin-top:6px}
+
+/* planos: destaques, item "não incluído" e preço sob consulta */
+.destaques{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:10px 14px;margin:0 0 30px;padding:0}
+.destaques li{background:color-mix(in srgb,var(--ac) 14%,transparent);border:1px solid color-mix(in srgb,var(--ac) 40%,transparent);border-radius:999px;padding:8px 16px;font-size:15px}
+.plano li.nao{color:var(--mut)}
+.plano li.nao::before{background:color-mix(in srgb,var(--mut) 18%,transparent);background-image:none}
+.plano li.nao::after{content:" d7";position:absolute;left:5px;top:1px;font-size:17px;line-height:20px;color:var(--mut)}
+.plano .p.consulta{font-size:34px;line-height:1.15;padding:6px 0 4px}
+.planos.quatro .plano .p.consulta{font-size:30px}
