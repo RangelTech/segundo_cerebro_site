@@ -5,7 +5,9 @@ const idx = fs.readFileSync('public/index.html', 'utf8')
 const ini = idx.indexOf('<section id="planos"')
 const fim = idx.indexOf('</section>', ini) + '</section>'.length
 if (ini < 0) throw new Error('bloco de planos nao encontrado em public/index.html')
-const bloco = idx.slice(ini, fim).replace('<section id="planos" class="alt">', '<section id="planos-testar" class="alt">').replace('<h2>Planos</h2>', '<h2>Escolha o seu plano</h2>')
+let bloco = idx.slice(ini, fim).replace('<section id="planos" class="alt">', '<section id="planos-testar" class="alt">').replace('<h2>Planos</h2>', '<h2>Escolha o seu plano</h2>')
+// quem chegou ao paywall já usou o Free: o card Free não aparece de novo
+bloco = bloco.replace(/\s*<article class="plano free">[\s\S]*?<\/article>/, "").replace("planos cinco", "planos quatro")
 let t = fs.readFileSync('public/testar/index.html', 'utf8')
 const marca = /<!--PLANOS-->|<!--PLANOS-INI-->[\s\S]*?<!--PLANOS-FIM-->/
 if (!marca.test(t)) throw new Error('marca <!--PLANOS--> nao encontrada em public/testar/index.html')

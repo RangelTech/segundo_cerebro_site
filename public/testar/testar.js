@@ -1,10 +1,10 @@
-// Teste grátis do Segundo Cérebro: cadastro, código por e-mail, chat de 5 perguntas e, quando acabam, os planos.
-// Fala só com a API pública /v1/free/* (sem chave de API): o servidor conta as perguntas e recusa a sexta com 402.
+// Plano Free do Segundo Cérebro: cadastro, código por e-mail, chat e, quando o uso de demonstração acaba, a tela de planos.
+// Fala só com a API pública /v1/free/* (sem chave de API). O servidor conta e recusa com 402; a tela NÃO mostra contador nem número de perguntas.
 (function () {
   var API = ((window.BRAIN && window.BRAIN.api) || 'https://qwen.rangeltech.net').replace(/\/+$/, '')
   var $ = function (id) { return document.getElementById(id) }
   var CH = 'sbfree'
-  var sessao = null // { token, email }
+  var sessao = null // { token, email, nome }
   var historico = [] // { role, content }
   var ocupado = false
   var modo = 'criar'
@@ -30,7 +30,7 @@
     $('c-nome').hidden = m !== 'criar'
     $('dica-senha').hidden = m !== 'criar'
     $('senha').autocomplete = m === 'criar' ? 'new-password' : 'current-password'
-    $('b-auth').textContent = m === 'criar' ? 'Criar conta e testar' : 'Entrar'
+    $('b-auth').textContent = m === 'criar' ? 'Criar conta e começar' : 'Entrar'
     $('e-auth').textContent = ''
   }
   $('aba-criar').onclick = function () { aba('criar') }
@@ -38,22 +38,22 @@
 
   $('f-auth').addEventListener('submit', function (e) {
     e.preventDefault()
-    var email = $('email').value.trim(), senha = $('senha').value
+    var email = $('email').value.trim(), senha = $('senha').value, nome = $('nome').value.trim()
     var erro = $('e-auth'); erro.textContent = ''
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return (erro.textContent = 'Informe um e-mail válido.')
     if (senha.length < 8) return (erro.textContent = 'A senha precisa de pelo menos 8 caracteres.')
     var b = $('b-auth'); b.disabled = true
     var req = modo === 'criar'
-      ? api('/v1/free/signup', { email: email, password: senha, name: $('nome').value.trim(), website: $('website').value })
+      ? api('/v1/free/signup', { email: email, password: senha, name: nome, website: $('website').value })
       : api('/v1/free/login', { email: email, password: senha })
     req.then(function (r) { return r.json().catch(function () { return {} }).then(function (j) { return { s: r.status, j: j } }) })
       .then(function (r) {
         b.disabled = false
-        if (modo === 'criar' && r.s === 200) return pedirCodigo(email)
+        if (modo === 'criar' && r.s === 200) { sessao = { email: email, nome: nome }; return pedirCodigo(email) }
         if (modo === 'criar' && r.s === 409) { aba('entrar'); return ($('e-auth').textContent = 'Este e-mail já tem cadastro. Entre com a sua senha.') }
         if (modo === 'entrar' && r.s === 403 && codErro(r.j) === 'need_code') return pedirCodigo(email)
         if (r.s === 200 && r.j.paid) return ($('e-auth').textContent = r.j.message)
-        if (r.s === 200 && r.j.token) return entrou({ token: r.j.token, email: email }, r.j)
+        if (r.s === 200 && r.j.token) return entrou({ token: r.j.token, email: email, nome: nome }, r.j)
         $('e-auth').textContent = msgErro(r.j)
       })
       .catch(function () { b.disabled = false; $('e-auth').textContent = 'Sem conexão com o servidor. Tente de novo.' })
@@ -66,32 +66,27 @@
     var email = $('cod-email').textContent, code = $('codigo').value.replace(/\D/g, '')
     if (code.length !== 6) return ($('e-cod').textContent = 'Digite os 6 números do código.')
     api('/v1/free/verify', { email: email, code: code }).then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j } }) })
-      .then(function (r) { if (r.s === 200) entrou({ token: r.j.token, email: email }, r.j); else $('e-cod').textContent = msgErro(r.j) })
+      .then(function (r) { if (r.s === 200) entrou({ token: r.j.token, email: email, nome: (sessao && sessao.nome) || '' }, r.j); else $('e-cod').textContent = msgErro(r.j) })
       .catch(function () { $('e-cod').textContent = 'Sem conexão com o servidor. Tente de novo.' })
   })
   $('b-reenviar').onclick = function () { api('/v1/free/resend', { email: $('cod-email').textContent }); $('e-cod').textContent = 'Enviamos um novo código.' }
   $('b-voltar').onclick = function () { tela('t-auth') }
 
   // ---------- chat ----------
-  function contador(restam, limite) {
-    $('cont').innerHTML = restam > 0
-      ? 'Perguntas grátis: <b>' + restam + '</b> de ' + limite + ' restantes'
-      : 'Suas perguntas grátis acabaram'
-  }
   function entrou(s, estado) {
     sessao = s; guardar()
-    historico = []; $('msgs').innerHTML = ''
+    historico = []
+    Array.prototype.forEach.call($('msgs').querySelectorAll('.t-msg'), function (n) { n.remove() })
+    $('vazio').hidden = false
     tela('t-chat')
-    contador(estado.remaining, estado.limit)
-    boasVindas()
-    if (estado.remaining <= 0) acabou()
+    if (estado && estado.remaining <= 0) acabou()
     else $('pergunta').focus()
   }
-  function boasVindas() { add('sis', 'Pergunte o que quiser. Aqui não tem filtro de conteúdo.') }
   function add(tipo, texto) {
+    $('vazio').hidden = true
     var d = document.createElement('div'); d.className = 't-msg ' + tipo
     if (tipo === 'ia') d.innerHTML = fmt(texto); else d.textContent = texto
-    $('msgs').appendChild(d); $('msgs').scrollTop = $('msgs').scrollHeight
+    $('msgs').appendChild(d); d.scrollIntoView({ block: 'end', behavior: 'smooth' })
     return d
   }
   function fmt(t) { // markdown mínimo: blocos de código, negrito e código em linha (tudo escapado antes)
@@ -100,17 +95,39 @@
     s = s.replace(/`([^`\n]+)`/g, '<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
     return s
   }
+
+  // Cakto pré-preenche e-mail, nome e telefone pela URL (testado): o botão de compra já leva o e-mail do cadastro
+  function comDados(url) {
+    if (!sessao || !sessao.email) return url
+    var q = 'email=' + encodeURIComponent(sessao.email) + (sessao.nome ? '&name=' + encodeURIComponent(sessao.nome) : '')
+    return url + (url.indexOf('?') < 0 ? '?' : '&') + q
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="pay.cakto.com.br"]')
+    if (a && $('paywall').contains(a) && a.href.indexOf('email=') < 0) a.href = comDados(a.href)
+  }, true)
+
   function acabou() {
-    contador(0, 5)
-    $('pergunta').disabled = true; $('b-env').disabled = true; $('sug').hidden = true
+    $('pergunta').disabled = true; $('b-env').disabled = true
+    $('f-chat').hidden = true
     $('pw-email').textContent = sessao ? sessao.email : ''
+    // o Lite fica visivelmente pior que o Max: o filtro de conteúdo em destaque e o Max marcado como "a IA que você acabou de usar"
+    var cards = document.querySelectorAll('#paywall .plano')
+    Array.prototype.forEach.call(cards, function (c) {
+      var nome = (c.querySelector('h3') || {}).textContent || ''
+      if (/^(Lite|Light)$/i.test(nome.trim())) {
+        c.classList.add('alerta')
+        Array.prototype.forEach.call(c.querySelectorAll('li'), function (li) { if (/filtro/i.test(li.textContent)) li.classList.add('censura') })
+      }
+      if (/^Max$/i.test(nome.trim())) { var f = c.querySelector('.flag'); if (f) f.textContent = 'A IA que você acabou de usar' }
+    })
     $('paywall').hidden = false
-    setTimeout(function () { $('paywall').scrollIntoView({ behavior: 'smooth', block: 'start' }) }, 300)
+    setTimeout(function () { $('paywall').scrollIntoView({ behavior: 'smooth', block: 'start' }) }, 350)
   }
 
   function enviar(texto) {
     if (ocupado || !texto.trim()) return
-    ocupado = true; $('e-chat').textContent = ''; $('sug').hidden = true
+    ocupado = true; $('e-chat').textContent = ''
     $('b-env').disabled = true
     historico.push({ role: 'user', content: texto })
     add('eu', texto)
@@ -130,13 +147,12 @@
             while ((i = buf.indexOf('\n')) >= 0) {
               var l = buf.slice(0, i).trim(); buf = buf.slice(i + 1)
               if (l.indexOf('data:') !== 0 || l.indexOf('[DONE]') >= 0) continue
-              try {
-                var j = JSON.parse(l.slice(5))
-                var c = j.choices && j.choices[0] && j.choices[0].delta && j.choices[0].delta.content
-                if (c) { resp += c; bolha.innerHTML = fmt(resp); $('msgs').scrollTop = $('msgs').scrollHeight }
-                if (j.free) fim = j.free
-                if (j.error) throw new Error(j.error.message)
-              } catch (er) { if (er.message && er.message.indexOf('JSON') < 0 && er.name !== 'SyntaxError') throw er }
+              var j
+              try { j = JSON.parse(l.slice(5)) } catch (er) { continue }
+              var c = j.choices && j.choices[0] && j.choices[0].delta && j.choices[0].delta.content
+              if (c) { resp += c; bolha.innerHTML = fmt(resp); bolha.scrollIntoView({ block: 'end' }) }
+              if (j.free) fim = j.free
+              if (j.error) throw new Error(j.error.message)
             }
             return ler()
           })
@@ -145,30 +161,29 @@
       })
       .then(function () {
         if (resp) historico.push({ role: 'assistant', content: resp })
-        else if (!bolha.isConnected) return
-        else { bolha.remove(); historico.pop() }
-        if (fim) { contador(fim.remaining, fim.limit); if (fim.limit_reached) acabou() }
+        else if (bolha.isConnected) { bolha.remove(); historico.pop() }
+        if (fim && fim.limit_reached) setTimeout(acabou, 900) // deixa ler a última resposta antes da tela de planos
       })
       .catch(function (er) {
         if (bolha.isConnected && !resp) bolha.remove()
         historico.pop()
-        $('e-chat').textContent = (er && er.message) || 'Sem conexão. Tente de novo (sua pergunta não foi descontada).'
+        $('e-chat').textContent = (er && er.message) || 'Sem conexão. Tente de novo.'
       })
       .then(function () { ocupado = false; if (!$('pergunta').disabled) { $('b-env').disabled = false; $('pergunta').focus() } })
   }
 
   $('f-chat').addEventListener('submit', function (e) { e.preventDefault(); var t = $('pergunta').value; $('pergunta').value = ''; $('pergunta').style.height = 'auto'; enviar(t) })
   $('pergunta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('f-chat').requestSubmit() } })
-  $('pergunta').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(160, this.scrollHeight) + 'px' })
+  $('pergunta').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(180, this.scrollHeight) + 'px' })
   Array.prototype.forEach.call($('sug').querySelectorAll('button'), function (b) { b.onclick = function () { enviar(b.textContent) } })
 
-  function sair() { sessao = null; guardar(); historico = []; $('paywall').hidden = true; $('pergunta').disabled = false; $('b-env').disabled = false; $('sug').hidden = false; tela('t-auth') }
+  function sair() { sessao = null; guardar(); historico = []; $('paywall').hidden = true; $('f-chat').hidden = false; $('pergunta').disabled = false; $('b-env').disabled = false; tela('t-auth') }
   $('b-sair').onclick = sair
 
   // ---------- partida: já tem sessão? ----------
   aba('criar')
   sessao = ler()
-  if (!sessao) return tela('t-auth')
+  if (!sessao || !sessao.token) { sessao = null; return tela('t-auth') }
   api('/v1/free/me', undefined, sessao.token).then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j } }) })
     .then(function (r) {
       if (r.s !== 200) return sair()

@@ -1,4 +1,4 @@
-// Configuração do site. Planos: Light, Max, Ultra (checkout Cakto) e Enterprise (WhatsApp, sem checkout). Links de checkout da Cakto (ofertas mensais, criadas por API em 05/11/2026).
+// Configuração do site. Planos: Lite (id interno light), Max, Ultra (checkout Cakto) e Enterprise (WhatsApp, sem checkout). Links de checkout da Cakto (ofertas mensais, criadas por API em 05/11/2026).
 window.BRAIN = {
   checkout: { light: 'https://pay.cakto.com.br/to43jov', max: 'https://pay.cakto.com.br/jpqnrnn', ultra: 'https://pay.cakto.com.br/36dntzb', vm: 'https://pay.cakto.com.br/dkdgm49' },
   // mesma assinatura somada à máquina virtual (R$ 399): preço exato do plano + 399, ofertas mensais criadas por API

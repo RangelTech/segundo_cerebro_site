@@ -265,3 +265,11 @@ body.modal-aberto{overflow:hidden}
 .plano li.nao::after{content:" d7";position:absolute;left:5px;top:1px;font-size:17px;line-height:20px;color:var(--mut)}
 .plano .p.consulta{font-size:34px;line-height:1.15;padding:6px 0 4px}
 .planos.quatro .plano .p.consulta{font-size:30px}
+/* 5 cards (Free + 4 planos) */
+.planos.cinco{grid-template-columns:repeat(5,1fr);gap:12px}
+.planos.cinco .plano{padding:24px 16px}.planos.cinco .plano .p{font-size:32px}.planos.cinco .plano .p.consulta{font-size:28px}
+.planos.cinco .plano ul{font-size:14px}
+.planos.cinco .plano.free{background:var(--bg2)}
+@media (max-width:1180px){.planos.cinco{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:820px){.planos.cinco{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.planos.cinco{grid-template-columns:1fr}}
