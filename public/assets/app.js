@@ -183,23 +183,14 @@
   }
 
   // links diretos da última release (a API do GitHub aceita chamada do navegador); se falhar, ficam na página de releases
-  var casar = {
-    'win-setup': /Windows\.exe$/i, 'win-portable': /Portatil\.exe$/i,
-    'mac-arm': /mac-arm64\.dmg$/i, 'mac-intel': /mac-x64\.dmg$/i,
-    'linux-appimage': /\.AppImage$/i, 'linux-deb': /\.deb$/i,
-  }
-  if (C.repo && window.fetch) {
-    fetch('https://api.github.com/repos/' + C.repo + '/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+  // Versão e links vêm do nosso servidor (que não depende da API do GitHub e guarda a última versão boa). Se falhar, ficam os links fixos do HTML.
+  if (C.api && window.fetch) {
+    fetch(C.api.replace(/\/+$/, '') + '/v1/app/latest')
       .then(function (r) { return r.ok ? r.json() : Promise.reject() })
       .then(function (rel) {
-        var ativos = rel.assets || []
-        $$('[data-asset]').forEach(function (a) {
-          var re = casar[a.dataset.asset]
-          var f = ativos.filter(function (x) { return re && re.test(x.name) })[0]
-          if (f) { a.href = f.browser_download_url; a.title = f.name + ' · ' + Math.round(f.size / 1048576) + ' MB' }
-        })
+        $$('[data-asset]').forEach(function (a) { var u = rel.assets && rel.assets[a.dataset.asset]; if (u) a.href = u })
         var v = $('#versao')
-        if (v && rel.tag_name) v.innerHTML = 'Versão atual: <b>' + rel.tag_name.replace(/^v/, '') + '</b>. Todas as versões em <a href="https://github.com/' + C.repo + '/releases">GitHub</a>.'
+        if (v && rel.version) v.innerHTML = 'Versão atual: <b>' + rel.version + '</b>. Todas as versões em <a href="https://github.com/' + C.repo + '/releases">GitHub</a>.'
       })
       .catch(function () {})
   }
