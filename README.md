@@ -11,7 +11,7 @@ Site de venda do Segundo Cérebro (`https://brain.rangeltech.net`). HTML, CSS e 
 
 Prévia local: `python -m http.server 9710 --directory public`.
 
-Versão: tag `v*` gera a imagem e o manifesto. O deploy é só pelo `vps_rt_infra`: `gh workflow run release-intake.yml` e depois `gh workflow run deploy.yml -f service=brain-site`.
+Versão: tag `v*` gera a imagem e o manifesto. O deploy é só pelo `vps_rt_infra`: `gh workflow run deploy.yml -f service=brain-site` (ele busca a última release na hora).
 
 Para trocar um link de checkout, edite `config.js` e lance uma versão nova. Os produtos e ofertas ficam na Cakto (ids em `personal-skills/secrets/cakto.env`).
 
