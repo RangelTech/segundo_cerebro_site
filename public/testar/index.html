@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teste grátis · Segundo Cérebro</title>
+<meta name="description" content="Faça 5 perguntas grátis para a IA sem censura do Segundo Cérebro. Cadastro rápido, sem cartão.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#faf6f0">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.17">
+<style>
+.t-wrap{width:min(760px,100% - 32px);margin:0 auto;padding:28px 0 64px}
+.t-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:26px}
+.t-card h1{font-family:var(--serif);font-size:clamp(26px,5vw,34px);line-height:1.15;margin:0 0 6px}
+.t-card .sub{color:var(--mut);margin:0 0 18px}
+.t-abas{display:flex;gap:6px;margin:0 0 16px;border-bottom:1px solid var(--line)}
+.t-abas button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 4px;margin-right:14px;font:600 15px var(--sans);color:var(--mut);cursor:pointer}
+.t-abas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ac)}
+.t-campo{display:block;margin:0 0 12px}
+.t-campo span{display:block;font-size:14px;color:var(--mut);margin:0 0 4px}
+.t-campo input,.t-ta{width:100%;font:16px var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.t-campo input:focus,.t-ta:focus{outline:3px solid color-mix(in srgb,var(--ac) 40%,transparent);border-color:var(--ac)}
+.t-iscas{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.t-erro{color:#b3261e;font-size:15px;margin:8px 0 0;min-height:1.2em}
+.t-beneficios{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.t-beneficios li{font-size:13.5px;padding:5px 11px;border-radius:999px;background:var(--bg2);border:1px solid var(--line)}
+.t-nota{color:var(--mut);font-size:13.5px;margin:12px 0 0}
+.t-cod{letter-spacing:.5em;font-size:24px;text-align:center}
+.t-barra{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;flex-wrap:wrap}
+.t-cont{font-weight:600}
+.t-cont b{color:var(--ac)}
+.t-sair{background:none;border:0;color:var(--mut);cursor:pointer;font:14px var(--sans);text-decoration:underline}
+.t-msgs{min-height:260px;max-height:58vh;overflow:auto;display:flex;flex-direction:column;gap:14px;padding:4px 2px 12px}
+.t-msg{max-width:92%;padding:11px 14px;border-radius:16px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.t-msg.eu{align-self:flex-end;background:var(--ac);color:var(--ac-ink);border-bottom-right-radius:4px}
+.t-msg.ia{align-self:flex-start;background:var(--bg2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.t-msg.ia pre{background:var(--dark);color:var(--dark-ink);padding:10px 12px;border-radius:10px;overflow:auto;margin:8px 0;white-space:pre}
+.t-msg.ia code{font-family:ui-monospace,Consolas,monospace;font-size:.92em}
+.t-msg.sis{align-self:center;color:var(--mut);font-size:14px}
+.t-dig{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mut);margin-right:4px;animation:tp 1s infinite}
+.t-dig:nth-child(2){animation-delay:.15s}.t-dig:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.t-sug{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.t-sug button{font:14px var(--sans);padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.t-sug button:hover{border-color:var(--ac)}
+.t-form{display:flex;gap:10px;align-items:flex-end}
+.t-ta{resize:none;min-height:50px;max-height:160px}
+.t-form .btn{flex:none}
+#paywall{margin-top:26px}
+#paywall .t-aviso{background:var(--card);border:1px solid var(--ac);border-radius:var(--r);padding:20px 22px;margin:0 0 8px}
+#paywall .t-aviso h2{font-family:var(--serif);margin:0 0 6px;font-size:26px}
+#paywall .t-aviso p{margin:0;color:var(--mut)}
+#paywall section{padding-top:8px}
+[hidden]{display:none!important}
+</style>
+<script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="topo">
+  <div class="wrap">
+    <a class="marca" href="/" aria-label="Segundo Cérebro, início"><img src="/assets/img/logo.png" alt="" width="34" height="34">Segundo Cérebro</a>
+    <nav class="menu" id="menu" aria-label="Principal"><a href="/#planos">Planos</a><a href="/#baixar">Baixar</a></nav>
+    <div class="topo-acoes">
+      <button class="tema" id="tema" aria-label="Alternar claro e escuro" title="Alternar claro e escuro">◐</button>
+      <a class="btn pri peq" href="/#planos">Ver planos</a>
+      <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main class="t-wrap">
+  <!-- 1. cadastro / entrar -->
+  <section class="t-card" id="t-auth" hidden>
+    <h1>Teste grátis: 5 perguntas</h1>
+    <p class="sub">A nossa IA sem censura, sem cartão e sem instalar nada. Cadastre-se em 1 minuto.</p>
+    <ul class="t-beneficios"><li>Sem censura</li><li>5 perguntas grátis</li><li>Sem cartão de crédito</li></ul>
+    <div class="t-abas" role="tablist">
+      <button role="tab" id="aba-criar" aria-selected="true">Criar conta</button>
+      <button role="tab" id="aba-entrar" aria-selected="false">Já tenho conta</button>
+    </div>
+    <form id="f-auth" novalidate>
+      <label class="t-campo" id="c-nome"><span>Nome (opcional)</span><input id="nome" autocomplete="name" maxlength="80"></label>
+      <label class="t-campo"><span>E-mail</span><input id="email" type="email" autocomplete="email" required maxlength="200"></label>
+      <label class="t-campo"><span>Senha <small id="dica-senha">(mínimo 8 caracteres)</small></span><input id="senha" type="password" autocomplete="new-password" required maxlength="200"></label>
+      <div class="t-iscas" aria-hidden="true"><label>Site<input id="website" tabindex="-1" autocomplete="off"></label></div>
+      <button class="btn pri" id="b-auth" type="submit" style="width:100%">Criar conta e testar</button>
+      <p class="t-erro" id="e-auth" role="alert"></p>
+    </form>
+    <p class="t-nota">Enviamos um código de 6 números para o seu e-mail para confirmar que é você. Ao continuar, você aceita os <a href="/termos-de-uso/">Termos de uso</a> e a <a href="/politica-de-privacidade/">Política de privacidade</a>.</p>
+  </section>
+
+  <!-- 2. código do e-mail -->
+  <section class="t-card" id="t-cod" hidden>
+    <h1>Confirme o seu e-mail</h1>
+    <p class="sub">Enviamos um código de 6 números para <b id="cod-email"></b>. Pode levar um minuto; veja também o spam.</p>
+    <form id="f-cod" novalidate>
+      <label class="t-campo"><span class="sr">Código</span><input id="codigo" class="t-cod" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000"></label>
+      <button class="btn pri" type="submit" style="width:100%">Confirmar</button>
+      <p class="t-erro" id="e-cod" role="alert"></p>
+    </form>
+    <p class="t-nota"><button class="t-sair" id="b-reenviar" type="button">Reenviar o código</button> · <button class="t-sair" id="b-voltar" type="button">Usar outro e-mail</button></p>
+  </section>
+
+  <!-- 3. chat -->
+  <section class="t-card" id="t-chat" hidden>
+    <div class="t-barra">
+      <div class="t-cont" id="cont" aria-live="polite"></div>
+      <button class="t-sair" id="b-sair" type="button">Sair</button>
+    </div>
+    <div class="t-msgs" id="msgs" aria-live="polite"></div>
+    <div class="t-sug" id="sug">
+      <button type="button">Escreva um e-mail firme cobrando um cliente atrasado</button>
+      <button type="button">Dê a sua opinião sincera, sem rodeios: vale a pena abrir uma loja online hoje?</button>
+      <button type="button">Explique como funciona o mercado de ações para uma criança de 10 anos</button>
+    </div>
+    <form class="t-form" id="f-chat">
+      <textarea class="t-ta" id="pergunta" rows="1" maxlength="4000" placeholder="Escreva a sua pergunta…" aria-label="Sua pergunta"></textarea>
+      <button class="btn pri" id="b-env" type="submit">Enviar</button>
+    </form>
+    <p class="t-erro" id="e-chat" role="alert"></p>
+    <p class="t-nota">Versão de teste: só texto. No plano completo há arquivos, imagens, vídeos, navegador e o agente no seu computador.</p>
+  </section>
+
+  <!-- 4. acabou: planos (o mesmo bloco do site) -->
+  <div id="paywall" hidden>
+    <div class="t-aviso">
+      <h2>Suas 5 perguntas grátis acabaram</h2>
+      <p>Gostou? Escolha um plano para continuar, com tudo liberado. <b>Na compra, use o mesmo e-mail do cadastro (<span id="pw-email"></span>)</b> para a sua conta ser liberada automaticamente.</p>
+    </div>
+    <!--PLANOS-INI-->
+<section id="planos-testar" class="alt">
+  <div class="wrap">
+    <div class="tit"><h2>Escolha o seu plano</h2><p>Do essencial ao sob medida. Escolha o plano e comece a usar.</p></div>
+    <div class="alterna" role="group" aria-label="Ciclo de cobrança">
+      <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
+      <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
+    </div>
+    <ul class="destaques" aria-label="Diferenciais">
+      <li><b>IA sem censura</b> a partir do Max</li>
+      <li><b>Clonagem liberada</b> a partir do Max</li>
+      <li><b>Claude, GPT e outros provedores</b> em todos os planos</li>
+    </ul>
+    <div class="planos quatro">
+      <article class="plano">
+        <h3>Light</h3><div class="p">R$ 119<small> /mês</small></div><p class="desc">O essencial para começar.</p>
+        <ul>
+          <li>Aplicativo para Windows, macOS e Linux</li>
+          <li>Segundo Cérebro Web no celular e no computador</li>
+          <li>Uso por sessão de 5 horas</li>
+          <li>Computadores ilimitados</li>
+          <li>Memória das conversas e geração de imagens</li>
+          <li>Conecte a sua conta do <b>Claude</b>, do <b>GPT</b> e de outros provedores, além da nossa IA</li>
+          <li>IA com filtro de conteúdo</li>
+          <li class="nao">Sem o pacote de skills profissionais: você instala as suas</li>
+        </ul>
+        <a class="btn sec" data-plano="light" href="#planos">Assinar o Light</a>
+      </article>
+      <article class="plano dest">
+        <span class="flag">Mais escolhido</span>
+        <h3>Max</h3><div class="p">R$ 497<small> /mês</small></div><p class="desc">Para usar o dia inteiro, com tudo pronto.</p>
+        <ul>
+          <li><b>IA sem censura</b></li>
+          <li><b>Clonagem liberada</b></li>
+          <li><b>Pacote de skills profissional já configurado:</b> vídeo, imagem, voz, web, dados, documentos, marketing, automação, código e mais, prontas para usar</li>
+          <li><b>Limite de tokens muito maior:</b> 3 vezes mais uso por sessão que o Light</li>
+          <li>Mais geração de imagens por mês</li>
+          <li>Prioridade na fila</li>
+          <li>Multiprovedor: Claude, GPT e a nossa IA no mesmo lugar</li>
+          <li>Tudo do Light</li>
+        </ul>
+        <a class="btn pri" data-plano="max" href="#planos">Assinar o Max</a>
+      </article>
+      <article class="plano">
+        <h3>Ultra</h3><div class="p">R$ 1.197<small> /mês</small></div><p class="desc">Para equipes e agências.</p>
+        <ul>
+          <li><b>Sem limite de sessão:</b> tokens à vontade, o dia todo</li>
+          <li><b>IA sem censura</b> e <b>clonagem liberada</b></li>
+          <li>Pacote de skills profissional completo e pré-configurado</li>
+          <li>4 vezes mais imagens por mês que o Max</li>
+          <li>Prioridade máxima na fila</li>
+          <li>Multiprovedor: Claude, GPT e a nossa IA</li>
+          <li>Tudo do Max</li>
+        </ul>
+        <a class="btn sec" data-plano="ultra" href="#planos">Assinar o Ultra</a>
+      </article>
+      <article class="plano">
+        <h3>Enterprise</h3><div class="p consulta">Sob consulta</div><p class="desc">Para equipes e empresas.</p>
+        <ul>
+          <li><b>Análise detalhada do seu problema</b> antes de qualquer proposta</li>
+          <li><b>Criamos o aplicativo de acordo com a sua demanda</b>, com os seus fluxos e regras</li>
+          <li>Integração com os seus sistemas, bases de dados e ferramentas</li>
+          <li>Máquina virtual dedicada, implantação e suporte direto com a nossa equipe</li>
+          <li>Skills sob medida para o seu negócio</li>
+          <li>Tudo do Ultra</li>
+        </ul>
+        <a class="btn pri" data-wa href="https://wa.me/5562985613482?text=Ol%C3%A1%21%20Quero%20falar%20sobre%20o%20plano%20Enterprise%20do%20Segundo%20C%C3%A9rebro." rel="noopener">Falar no WhatsApp</a>
+      </article>
+    </div>
+    <p class="nota-plano" id="nota-planos"></p>
+  </div>
+</section>
+    <!--PLANOS-FIM-->
+  </div>
+</main>
+
+<script src="/assets/config.js"></script>
+<script src="/assets/app.js?v=0.1.17"></script>
+<script src="/testar/testar.js?v=0.1.17"></script>
+</body>
+</html>
