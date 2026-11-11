@@ -6,7 +6,7 @@ const dir = path.join(__dirname, 'termos')
 const arq = fs.readdirSync(dir).filter((f) => f.endsWith('.md')).sort().pop()
 const versao = arq.replace(/\.md$/, '')
 const corpo = renderMd(fs.readFileSync(path.join(dir, arq), 'utf8'))
-const V = '0.1.20'
+const V = '0.1.21'
 const html = `<!doctype html>
 <html lang="pt-BR">
 <head>
