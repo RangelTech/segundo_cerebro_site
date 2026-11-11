@@ -28,6 +28,7 @@
     $('aba-criar').setAttribute('aria-selected', m === 'criar')
     $('aba-entrar').setAttribute('aria-selected', m === 'entrar')
     $('c-nome').hidden = m !== 'criar'
+    $('c-aceite').hidden = m !== 'criar'
     $('dica-senha').hidden = m !== 'criar'
     $('senha').autocomplete = m === 'criar' ? 'new-password' : 'current-password'
     $('b-auth').textContent = m === 'criar' ? 'Criar conta e começar' : 'Entrar'
@@ -42,14 +43,16 @@
     var erro = $('e-auth'); erro.textContent = ''
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return (erro.textContent = 'Informe um e-mail válido.')
     if (senha.length < 8) return (erro.textContent = 'A senha precisa de pelo menos 8 caracteres.')
+    if (modo === 'criar' && !$('aceite').checked) return (erro.textContent = 'Para continuar, marque que leu e aceita os Termos de uso.')
     var b = $('b-auth'); b.disabled = true
     var req = modo === 'criar'
-      ? api('/v1/free/signup', { email: email, password: senha, name: nome, website: $('website').value })
+      ? api('/v1/free/signup', { email: email, password: senha, name: nome, website: $('website').value, aceite_termos: true, termos_versao: (window.BRAIN || {}).termosVersao })
       : api('/v1/free/login', { email: email, password: senha })
     req.then(function (r) { return r.json().catch(function () { return {} }).then(function (j) { return { s: r.status, j: j } }) })
       .then(function (r) {
         b.disabled = false
         if (modo === 'criar' && r.s === 200) { sessao = { email: email, nome: nome }; return pedirCodigo(email) }
+        if (modo === 'criar' && r.s === 409 && codErro(r.j) === 'terms_outdated') return ($('e-auth').textContent = 'Os termos foram atualizados. Recarregue a página e leia de novo.')
         if (modo === 'criar' && r.s === 409) { aba('entrar'); return ($('e-auth').textContent = 'Este e-mail já tem cadastro. Entre com a sua senha.') }
         if (modo === 'entrar' && r.s === 403 && codErro(r.j) === 'need_code') return pedirCodigo(email)
         if (r.s === 200 && r.j.paid) return ($('e-auth').textContent = r.j.message)

@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://brain.rangeltech.net/">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.19">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.20">
 <script>try{var t=localStorage.getItem('tema');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 </head>
 <body>
@@ -77,6 +77,14 @@
     <div class="alterna" role="group" aria-label="Ciclo de cobrança">
       <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
       <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
+    </div>
+    <div class="cupom" id="cupom-bloco">
+      <button type="button" class="link-anual" id="cupom-abrir">Tenho um cupom de desconto</button>
+      <form class="cupom-form" id="cupom-form" hidden>
+        <input id="cupom-campo" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" placeholder="Digite o seu cupom" aria-label="Cupom de desconto">
+        <button class="btn sec peq" type="submit">Aplicar</button>
+      </form>
+      <p class="cupom-msg" id="cupom-msg" role="status" hidden></p>
     </div>
     <ul class="destaques" aria-label="Diferenciais">
       <li><b>IA sem censura</b>, em texto e em imagens, a partir do Max</li>
@@ -247,6 +255,7 @@
       <h3 id="mp-titulo"></h3>
       <div class="p" id="mp-preco"></div>
       <p class="anual-info" id="mp-anual" hidden></p>
+      <p class="cupom-linha" id="mp-cupom" hidden></p>
       <ul id="mp-lista"></ul>
     </div>
     <div class="mp-vm">
@@ -266,7 +275,7 @@
     </div>
   </div>
 </div>
-<script src="/assets/config.js?v=0.1.19"></script>
-<script src="/assets/app.js?v=0.1.19"></script>
+<script src="/assets/config.js?v=0.1.20"></script>
+<script src="/assets/app.js?v=0.1.20"></script>
 </body>
 </html>

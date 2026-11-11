@@ -8,7 +8,7 @@
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#faf6f0">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
-<link rel="stylesheet" href="/assets/style.css?v=0.1.19">
+<link rel="stylesheet" href="/assets/style.css?v=0.1.20">
 <style>
 .t-wrap{width:min(780px,100% - 28px);margin:0 auto;padding:22px 0 64px}
 .t-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:26px;max-width:520px;margin:26px auto 0}
@@ -106,11 +106,12 @@
       <label class="t-campo" id="c-nome"><span>Nome (opcional)</span><input id="nome" autocomplete="name" maxlength="80"></label>
       <label class="t-campo"><span>E-mail</span><input id="email" type="email" autocomplete="email" required maxlength="200"></label>
       <label class="t-campo"><span>Senha <small id="dica-senha">(mínimo 8 caracteres)</small></span><input id="senha" type="password" autocomplete="new-password" required maxlength="200"></label>
+      <label class="t-aceite" id="c-aceite"><input type="checkbox" id="aceite"><span>Li e aceito os <a href="/termos-de-uso/" target="_blank" rel="noopener">Termos de uso</a> e a <a href="/politica-de-privacidade/" target="_blank" rel="noopener">Política de privacidade</a>.</span></label>
       <div class="t-iscas" aria-hidden="true"><label>Site<input id="website" tabindex="-1" autocomplete="off"></label></div>
       <button class="btn pri" id="b-auth" type="submit" style="width:100%">Criar conta e começar</button>
       <p class="t-erro" id="e-auth" role="alert"></p>
     </form>
-    <p class="t-nota">Enviamos um código de 6 números para o seu e-mail para confirmar que é você. Ao continuar, você aceita os <a href="/termos-de-uso/">Termos de uso</a> e a <a href="/politica-de-privacidade/">Política de privacidade</a>.</p>
+    <p class="t-nota">Enviamos um código de 6 números para o seu e-mail para confirmar que é você. Os Termos de uso e a Política de privacidade ficam à sua disposição nos links acima.</p>
   </section>
 
   <!-- 2. código do e-mail -->
@@ -175,6 +176,14 @@
     <div class="alterna" role="group" aria-label="Ciclo de cobrança">
       <button type="button" data-ciclo="mensal" aria-pressed="false">Mensal</button>
       <button type="button" data-ciclo="anual" aria-pressed="true">Anual <span class="etq">Economize 2 meses</span></button>
+    </div>
+    <div class="cupom" id="cupom-bloco">
+      <button type="button" class="link-anual" id="cupom-abrir">Tenho um cupom de desconto</button>
+      <form class="cupom-form" id="cupom-form" hidden>
+        <input id="cupom-campo" type="text" maxlength="40" autocomplete="off" autocapitalize="characters" placeholder="Digite o seu cupom" aria-label="Cupom de desconto">
+        <button class="btn sec peq" type="submit">Aplicar</button>
+      </form>
+      <p class="cupom-msg" id="cupom-msg" role="status" hidden></p>
     </div>
     <ul class="destaques" aria-label="Diferenciais">
       <li><b>IA sem censura</b>, em texto e em imagens, a partir do Max</li>
@@ -243,7 +252,7 @@
 </main>
 
 <script src="/assets/config.js"></script>
-<script src="/assets/app.js?v=0.1.19"></script>
-<script src="/testar/testar.js?v=0.1.19"></script>
+<script src="/assets/app.js?v=0.1.20"></script>
+<script src="/testar/testar.js?v=0.1.20"></script>
 </body>
 </html>

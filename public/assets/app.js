@@ -35,6 +35,25 @@
   function brl(n) { return 'R$ ' + num(n) }
   function checkoutDe(id) { return ((ciclo === 'anual' ? C.checkoutAnual : C.checkout) || {})[id] }
   function checkoutVmDe(id) { return ((ciclo === 'anual' ? C.checkoutVmAnual : C.checkoutVm) || {})[id] }
+  // ---- cupom de afiliado: o servidor devolve, por produto, o preço e o link do afiliado; só vale nos produtos que têm link
+  var cupomAtual = null
+  var API = (C.api || '').replace(/\/+$/, '')
+  function chaveProduto(id, vm) { return (id === 'vm' ? 'vm' : id === 'light' ? 'lite' : id) + '_' + ciclo + (vm && id !== 'vm' ? '_vm' : '') }
+  function cupomDe(id, vm) { return cupomAtual && cupomAtual.produtos && cupomAtual.produtos[chaveProduto(id, vm)] || null }
+  function destino(id, vm) {  // o botão de compra: /assinar (com a chave do produto e o cupom) ou, sem checkout próprio, o link da Cakto
+    var normal = vm ? (checkoutVmDe(id) || checkoutDe(id)) : checkoutDe(id)
+    if (!normal) return ''
+    if (!C.checkoutProprio) { var cp = cupomDe(id, vm); return (cp && cp.url) || normal }
+    return '/assinar/?produto=' + chaveProduto(id, vm) + (cupomAtual ? '&cupom=' + encodeURIComponent(cupomAtual.cupom) : '')
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] }) }
+  function cupomHtml(id, mensal) {
+    if (!cupomAtual) return ''
+    var cp = cupomDe(id, false)
+    if (!cp) return '<span class="cupom-nao">O cupom de ' + esc(cupomAtual.afiliado) + ' não vale para este plano.</span>'
+    var normal = cp.preco_normal || mensal * (ciclo === 'anual' ? MESES : 1)
+    return 'Cupom de <b>' + esc(cupomAtual.afiliado) + '</b>: <s>' + brl(normal) + '</s> <b>' + brl(cp.preco) + '</b>' + (cp.percentual ? ' <span class="selo">-' + cp.percentual + '%</span>' : '') + '<br><span class="legal">' + (ciclo === 'anual' ? 'por ano' : 'por mês') + '</span>'
+  }
   function precos(mensal) {  // mensal: preço do mês cheio; no anual o cliente paga MESES vezes e o equivalente mensal é anual / 12
     var anual = mensal * MESES
     return { mensal: mensal, anual: anual, equiv: anual / 12, economia: mensal * 12 - anual }
@@ -72,10 +91,15 @@
     p.innerHTML = precoHtml(mensal)
     info.innerHTML = infoHtml(mensal)
     info.hidden = false
+    var linha = card.querySelector('.cupom-linha')
+    if (!linha) { linha = document.createElement('p'); linha.className = 'cupom-linha'; info.insertAdjacentElement('afterend', linha) }
+    var a = card.querySelector('[data-plano]')
+    var h = a ? cupomHtml(a.dataset.plano, mensal) : ''
+    linha.innerHTML = h; linha.hidden = !h
   }
   function aplicarCiclo() {
     $$('[data-plano]').forEach(function (a) {
-      var url = checkoutDe(a.dataset.plano)
+      var url = destino(a.dataset.plano, false)
       if (!url) return
       a.href = url
       pintarCard(a.closest('.plano'))
@@ -116,8 +140,20 @@
       soma.innerHTML = '<b>+ ' + brl(vm) + '</b> por mês, somados ao plano. Total: <b>' + brl(cheio) + '</b> por mês. <span class="legal">Cobrado todo mês no cartão de crédito.</span>'
     }
     var sim = $('#mp-sim'), nao = $('#mp-nao')
-    sim.href = checkoutVmDe(id) || checkoutDe(id)
-    nao.href = checkoutDe(id)
+    sim.href = destino(id, true)
+    nao.href = destino(id, false)
+    var mc = $('#mp-cupom')
+    if (mc) {
+      var so = cupomDe(id, false), com = cupomDe(id, true)
+      var html = ''
+      var porCiclo = ciclo === 'anual' ? ' por ano' : ' por mês'
+      if (cupomAtual) {
+        html = so || com ? 'Cupom de <b>' + esc(cupomAtual.afiliado) + '</b>:' : '<span class="cupom-nao">O cupom de ' + esc(cupomAtual.afiliado) + ' não vale para este plano.</span>'
+        if (so) html += '<br>Só o plano: <s>' + brl(so.preco_normal || mensal * (ciclo === 'anual' ? MESES : 1)) + '</s> <b>' + brl(so.preco) + '</b>' + (so.percentual ? ' (-' + so.percentual + '%)' : '') + porCiclo
+        if (com) html += '<br>Com a máquina virtual: <s>' + brl(com.preco_normal || cheio * (ciclo === 'anual' ? MESES : 1)) + '</s> <b>' + brl(com.preco) + '</b>' + (com.percentual ? ' (-' + com.percentual + '%)' : '') + porCiclo
+      }
+      mc.innerHTML = html; mc.hidden = !html
+    }
     $$('.alterna button', modal).forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.ciclo === ciclo ? 'true' : 'false') })
   }
   function abrirModal(botao) {
@@ -136,7 +172,7 @@
   $$('[data-plano]').forEach(function (a) {
     var id = a.dataset.plano
     if (!(C.checkout || {})[id]) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); a.textContent = 'Em breve'; return }
-    a.href = C.checkout[id]; a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
+    a.href = destino(id, false); a.rel = 'noopener'  // sem o modal o botão ainda leva ao checkout do plano
     if (modal && id !== 'vm' && (C.checkoutVm || {})[id]) a.addEventListener('click', function (e) { e.preventDefault(); abrirModal(a) })
   })
   document.addEventListener('click', function (e) {
@@ -166,6 +202,40 @@
         else if (!e.shiftKey && document.activeElement === fim) { e.preventDefault(); ini.focus() }
       }
     })
+  }
+  // ---- cupom: campo, ?cupom= na URL e o último cupom lembrado no navegador
+  var cBloco = $('#cupom-bloco'), cForm = $('#cupom-form'), cMsg = $('#cupom-msg'), cCampo = $('#cupom-campo')
+  function mostrarMsg(t, ok) { if (!cMsg) return; cMsg.textContent = t || ''; cMsg.hidden = !t; cMsg.classList.toggle('ok', !!ok) }
+  function repintarTudo() { aplicarCiclo(); if (modal && !modal.hidden && modal._botao) pintarModal(modal._botao) }
+  function usarCupom(codigo, manual) {
+    codigo = String(codigo || '').trim()
+    if (!codigo || !API || !window.fetch) return
+    fetch(API + '/v1/cupom/' + encodeURIComponent(codigo)).then(function (r) { return r.json() }).then(function (j) {
+      if (j && j.ok) {
+        cupomAtual = j
+        try { localStorage.setItem('cupom', j.cupom) } catch (e) {}
+        mostrarMsg('Você ganhou ' + (j.percentual ? j.percentual + '% de desconto' : 'desconto') + ' usando o cupom de ' + j.afiliado + '. O preço já aparece nos planos que o cupom cobre.', true)
+        if (cForm) cForm.hidden = true
+      } else {
+        cupomAtual = null
+        try { localStorage.removeItem('cupom') } catch (e) {}
+        if (manual) mostrarMsg((j && j.mensagem) || 'Cupom não encontrado.', false)
+      }
+      repintarTudo()
+    }).catch(function () { if (manual) mostrarMsg('Não consegui conferir o cupom agora. Tente de novo.', false) })
+  }
+  var abrirCupom = $('#cupom-abrir')
+  if (abrirCupom && cForm) {
+    abrirCupom.addEventListener('click', function () { cForm.hidden = !cForm.hidden; if (!cForm.hidden && cCampo) cCampo.focus() })
+    cForm.addEventListener('submit', function (e) { e.preventDefault(); usarCupom(cCampo.value, true) })
+  }
+  var doLink = new URLSearchParams(location.search).get('cupom')
+  var salvo = ''
+  try { salvo = localStorage.getItem('cupom') || '' } catch (e) {}
+  if (doLink || salvo) {
+    if (doLink && cCampo) cCampo.value = doLink
+    usarCupom(doLink || salvo, !!doLink)
+    if (doLink && cBloco) setTimeout(function () { var p = $('#planos'); if (p && p.scrollIntoView) p.scrollIntoView({ behavior: 'smooth' }) }, 500)
   }
   aplicarCiclo()
   var web = $('[data-web]')
